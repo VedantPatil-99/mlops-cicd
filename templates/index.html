@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Student Risk Monitor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main>
+      <h1>Student Performance Risk Monitor</h1>
+      <p>Enter simple academic indicators to obtain a transparent risk estimate.</p>
+      <form id="prediction-form">
+        <label>Daily study hours <input name="study_hours" type="number" min="0" max="12" step="0.5" required></label>
+        <label>Attendance percentage <input name="attendance" type="number" min="0" max="100" step="0.1" required></label>
+        <label>Previous score <input name="previous_score" type="number" min="0" max="100" step="0.1" required></label>
+        <button type="submit">Estimate risk</button>
+      </form>
+      <pre id="result" aria-live="polite">Waiting for input.</pre>
+      <nav><a href="/health">Health</a><a href="/metrics">Metrics</a></nav>
+    </main>
+    <script>
+      const form = document.getElementById("prediction-form");
+      const result = document.getElementById("result");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const query = new URLSearchParams(new FormData(form));
+        const response = await fetch(`/predict?${query}`);
+        result.textContent = JSON.stringify(await response.json(), null, 2);
+      });
+    </script>
+  </body>
+</html>
